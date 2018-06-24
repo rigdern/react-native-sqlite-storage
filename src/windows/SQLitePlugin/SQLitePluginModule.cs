@@ -574,5 +574,39 @@ namespace Org.PGSQLite.SQLitePlugin
             // extra to execute in the background.
             executeSqlBatch(options, success, error);
         }
+
+        [ReactMethod]
+        public void executeSql(JObject options, ICallback success, ICallback error)
+        {
+            var dbFileName = options.DBArgs.DBName;
+
+            if (dbFileName == null)
+            {
+                error.Invoke("You must specify database path");
+                return;
+            }
+
+            OpenDB dbInfo;
+            if (!openDBs.TryGetValue(dbFileName, out dbInfo))
+            {
+                error.Invoke("No such database, you must open it first");
+                return;
+            }
+
+            try
+            {
+                success.Invoke(ExecuteQuery(dbInfo, query));
+            }
+            catch (RNSQLiteException ex)
+            {
+                error.Invoke(ex.JsonMessage);
+            }
+        }
+
+        [ReactMethod]
+        public void backgroundExecuteSql(JObject options, ICallback success, ICallback error)
+        {
+            executeSql(options, success, error);
+        }
     }
 }
