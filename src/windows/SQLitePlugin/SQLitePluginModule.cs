@@ -286,6 +286,12 @@ namespace Org.PGSQLite.SQLitePlugin
             success.Invoke("DB closed");
         }
 
+        [ReactMethod]
+        public void attach(JObject options, ICallback success, ICallback error)
+        {
+            error.Invoke("attach isn't supported on this platform");
+        }
+
         public class DeleteOptions
         {
             public string Path { get; set; }
